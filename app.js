@@ -1,7 +1,24 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
+const mongoose = require('mongoose');
+
 const app = express();
- 
+
+//Map global promise - get rid of warning
+mongoose.Promise = global.Promise;
+
+//connect to mongoose very important
+mongoose.connect('mongodb://localhost/vidjot-dev',{
+//need to set that to true or error will happen    
+useMongoClient: true
+})
+.then(()=> console.log('Mongodb Connected....'))
+.catch(err => console.log("error"));
+
+// Load Idea Model
+require('./models.Idea');
+const Idea = mongoose.model('ideas');
+
 //handlebars middleware
 // handle bars templete engine
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -16,7 +33,7 @@ app.use(function(req, res, next){
 }); 
 // Index route
 app.get('/', (req, res) => {
-    const title = 'Welcome to the  ';
+    const title = 'Welcom';
    res.render('INDEX', {title: title
 });
 });
@@ -24,11 +41,7 @@ app.get('/', (req, res) => {
 app.get('/about', (req,res) =>{
 res.render('about');
 });
-//Search route
 
-app.get("/search", (req, res) =>{
-    res.render('search');
-});
 
 
 const port = 5000;
